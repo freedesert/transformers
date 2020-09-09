@@ -19,9 +19,9 @@ import argparse
 
 import torch
 
-from transformers import BertConfig, BertForPreTraining, load_tf_weights_in_bert
+from transformers import BertConfig, BertForPreTraining, load_tf_weights_in_bert, BertForSequenceClassification
 
-from .utils import logging
+from transformers.utils import logging
 
 
 logging.set_verbosity_info()
@@ -31,7 +31,7 @@ def convert_tf_checkpoint_to_pytorch(tf_checkpoint_path, bert_config_file, pytor
     # Initialise PyTorch model
     config = BertConfig.from_json_file(bert_config_file)
     print("Building PyTorch model from configuration: {}".format(str(config)))
-    model = BertForPreTraining(config)
+    model = BertForSequenceClassification(config)
 
     # Load weights from tf checkpoint
     load_tf_weights_in_bert(model, config, tf_checkpoint_path)
@@ -45,18 +45,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # Required parameters
     parser.add_argument(
-        "--tf_checkpoint_path", default=None, type=str, required=True, help="Path to the TensorFlow checkpoint path."
+        "--tf_checkpoint_path", default=r"E:\code_cbg\bd_sparklesearch_mod\sparklesearch_modtext_bert\src\title_model_ori\tmp\model.ckpt", type=str, required=False, help="Path to the TensorFlow checkpoint path."
     )
     parser.add_argument(
         "--bert_config_file",
-        default=None,
+        default=r"E:\code_cbg\bd_sparklesearch_mod\sparklesearch_modtext_bert\src\title_model_ori\tmp\bert_config.json",
         type=str,
-        required=True,
+        required=False,
         help="The config json file corresponding to the pre-trained BERT model. \n"
         "This specifies the model architecture.",
     )
     parser.add_argument(
-        "--pytorch_dump_path", default=None, type=str, required=True, help="Path to the output PyTorch model."
+        "--pytorch_dump_path", default=r"E:\code_cbg\bd_sparklesearch_mod\sparklesearch_modtext_bert\src\title_model_ori\tmp\model.bin", type=str, required=False, help="Path to the output PyTorch model."
     )
     args = parser.parse_args()
     convert_tf_checkpoint_to_pytorch(args.tf_checkpoint_path, args.bert_config_file, args.pytorch_dump_path)

@@ -105,6 +105,10 @@ def load_tf_weights_in_bert(model, config, tf_checkpoint_path):
     logger.info("Converting TensorFlow checkpoint from {}".format(tf_path))
     # Load weights from TF model
     init_vars = tf.train.list_variables(tf_path)
+    print("----------------------------")
+    for var_name in init_vars:
+        print(var_name)
+    print("----------------------------")
     names = []
     arrays = []
     for name, shape in init_vars:
@@ -114,6 +118,8 @@ def load_tf_weights_in_bert(model, config, tf_checkpoint_path):
         arrays.append(array)
 
     for name, array in zip(names, arrays):
+        if name in ['output_weights', 'output_bias']:
+            name = 'classifier/' + name
         name = name.split("/")
         # adam_v and adam_m are variables used in AdamWeightDecayOptimizer to calculated m and v
         # which are not required for using pretrained model
